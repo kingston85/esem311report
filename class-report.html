@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESEM 311 Student Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            min-height: 80vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .report-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        
+        .report-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        /* Login Section */
+        .login-section {
+            padding: 60px 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+        }
+        
+        .login-card {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .login-card h2 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+        
+        .login-card p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            text-align: left;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #d63031;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .demo-info {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .nav-tab:hover {
+            background: #e8f0ff;
+            color: #667eea;
+        }
+        
+        /* Content Sections */
+        .content {
+            display: none;
+            padding: 40px;
+        }
+        
+        .content.active {
+            display: block;
+        }
+        
+        /* Student Dashboard Styles */
+        .student-info {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 30px;
+        }
+        
+        .student-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .student-id {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .grade-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .grade-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s ease;
+        }
+        
+        .grade-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .grade-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .grade-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .final-grade { color: #667eea; }
+        .raw-score { color: #e17055; }
+        .refined-score { color: #00b894; }
+        .improvement { color: #fdcb6e; }
+        
+        /* Assessment Breakdown */
+        .assessment-breakdown {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-icon {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 0.9em;
+        }
+        
+        .assessment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        .assessment-item {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #e8f0ff;
+        }
+        
+        .assessment-score {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .assessment-name {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        /* Score colors based on performance */
+        .score-excellent { color: #00b894; }
+        .score-good { color: #0984e3; }
+        .score-average { color: #fdcb6e; }
+        .score-poor { color: #e17055; }
+        .score-zero { color: #d63031; }
+        
+        /* Class Report Styles */
+        .report-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border: 1px solid #e0e0e0;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #dfe6e9 0%, #b2bec3 100%);
+            border: 2px solid #2d3436;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 25px 0;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+        }
+        
+        .formula-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2d3436;
+        }
+        
+        .formula {
+            font-size: 1.1em;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #74b9ff;
+        }
+        
+        .summary-section {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            border-left: 5px solid #667eea;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 0 10px 10px 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .grade-distribution {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .grade-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .grade-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .grade-count {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .grade-percent {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .grade-a-bg { background: #e8f5e9; }
+        .grade-b-bg { background: #e3f2fd; }
+        .grade-c-bg { background: #fff3e0; }
+        .grade-d-bg { background: #ffebee; }
+        
+        .grade-a-text { color: #27ae60; }
+        .grade-b-text { color: #3498db; }
+        .grade-c-text { color: #f39c12; }
+        .grade-d-text { color: #e74c3c; }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .nav-tab {
+                padding: 12px 10px;
+                font-size: 0.9em;
+            }
+            
+            .grade-overview {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            
+            .assessment-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+            
+            .report-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .grade-distribution {
+                grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            }
+            
+            .report-link {
+                position: static;
+                display: block;
+                margin: 10px auto;
+                text-align: center;
+                width: fit-content;
+            }
+        }
+        
+        /* Hidden sections */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="class-report.html" class="report-link">📊 View Full Report</a>
+            <h1>ESEM 311 Student Portal</h1>
+            <p>Sustainable Development • Individual Grade Access</p>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- Login Section -->
+        <div id="loginSection" class="login-section">
+            <div class="login-card">
+                <h2>🎓 Student Access Portal</h2>
+                <p>Enter your Student ID to access your grades and class information</p>
+                <form onsubmit="login(event)">
+                    <div class="form-group">
+                        <label for="studentId">Student ID</label>
+                        <input type="text" id="studentId" placeholder="e.g., 105910" required>
+                    </div>
+                    <button type="submit" class="login-btn">Access My Grades</button>
+                    <div id="errorMessage" class="error-message">
+                        Invalid Student ID. Please check your ID number and try again.
+                    </div>
+                </form>
+                <div class="demo-info">
+                    <strong>📋 Access Information:</strong><br>
+                    Use your actual Student ID number from the class roster<br>
+                    <strong>Demo IDs:</strong> 105910, 100734, 99457, 91784
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Portal Content -->
+        <div id="portalContent" class="hidden">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('dashboard', this)">My Grades</button>
+                <button class="nav-tab" onclick="showTab('class-summary', this)">Class Summary</button>
+            </div>
+
+            <!-- My Grades Tab -->
+            <div id="dashboard" class="content active">
+                <!-- Student Info -->
+                <div class="student-info">
+                    <div class="student-name" id="studentName">Student Name</div>
+                    <div class="student-id" id="displayStudentId">Student ID</div>
+                </div>
+
+                <!-- Grade Overview -->
+                <div class="grade-overview">
+                    <div class="grade-card">
+                        <div class="grade-value final-grade" id="finalGrade">A-</div>
+                        <div class="grade-label">Final Grade</div>
+                    </div>
+                    <div class="grade-card">
+                        <div class="grade-value refined-score" id="refinedScore">85</div>
+                        <div class="grade-label">Refined Score</div>
+                    </div>
+                    <div class="grade-card">
+                        <div class="grade-value raw-score" id="rawScore">75</div>
+                        <div class="grade-label">Raw Score</div>
+                    </div>
+                    <div class="grade-card">
+                        <div class="grade-value improvement" id="improvement">+10</div>
+                        <div class="grade-label">Score Improvement</div>
+                    </div>
+                </div>
+
+                <!-- Assessment Breakdown -->
+                <div class="assessment-breakdown">
+                    <h3 class="section-title">
+                        <div class="section-icon">📝</div>
+                        Individual Assessment Breakdown
+                    </h3>
+                    <div class="assessment-grid" id="assessmentGrid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Personal Performance Summary -->
+                <div class="assessment-breakdown">
+                    <h3 class="section-title">
+                        <div class="section-icon">📈</div>
+                        Performance Summary
+                    </h3>
+                    <div id="personalSummary">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Class Summary Tab -->
+            <div id="class-summary" class="content">
+                <!-- Executive Summary -->
+                <div class="summary-section">
+                    <h2 style="color: #2c3e50; margin-bottom: 20px;">📊 Class Performance Overview</h2>
+                    <p style="font-size: 1.1em; margin-bottom: 15px;">
+                        <strong>The ESEM 311 Sustainable Development class achieved exceptional improvement through refined scoring methodology.</strong>
+                    </p>
+                    <p style="margin-bottom: 15px;">
+                        With 50 enrolled students, the class achieved a <strong>92% pass rate</strong> and <strong>56% B-or-better performance</strong> 
+                        following the application of the refined score formula. The class average improved from 70.0 to 80.3 points.
+                    </p>
+                </div>
+
+                <!-- Class Statistics -->
+                <div class="assessment-breakdown">
+                    <h3 class="section-title">
+                        <div class="section-icon">📊</div>
+                        Class Statistics
+                    </h3>
+                    <div class="report-overview">
+                        <div class="stat-card">
+                            <div class="stat-value">50</div>
+                            <div class="stat-label">Total Students</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">80.3</div>
+                            <div class="stat-label">Class Average</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">92%</div>
+                            <div class="stat-label">Pass Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">56%</div>
+                            <div class="stat-label">B or Better</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grade Distribution -->
+                <div class="assessment-breakdown">
+                    <h3 class="section-title">
+                        <div class="section-icon">🎓</div>
+                        Grade Distribution
+                    </h3>
+                    <div class="grade-distribution">
+                        <div class="grade-item grade-a-bg">
+                            <div class="grade-count grade-a-text">17</div>
+                            <div class="grade-percent">A- (34%)</div>
+                        </div>
+                        <div class="grade-item grade-b-bg">
+                            <div class="grade-count grade-b-text">9</div>
+                            <div class="grade-percent">B+ (18%)</div>
+                        </div>
+                        <div class="grade-item grade-b-bg">
+                            <div class="grade-count grade-b-text">10</div>
+                            <div class="grade-percent">B (20%)</div>
+                        </div>
+                        <div class="grade-item grade-c-bg">
+                            <div class="grade-count grade-c-text">10</div>
+                            <div class="grade-percent">C+ (20%)</div>
+                        </div>
+                        <div class="grade-item grade-c-bg">
+                            <div class="grade-count grade-c-text">8</div>
+                            <div class="grade-percent">C (16%)</div>
+                        </div>
+                        <div class="grade-item grade-d-bg">
+                            <div class="grade-count grade-d-text">4</div>
+                            <div class="grade-percent">D/F (8%)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Refined Score Formula -->
+                <div class="assessment-breakdown">
+                    <h3 class="section-title">
+                        <div class="section-icon">🔬</div>
+                        Refined Score Formula
+                    </h3>
+                    <div class="formula-box">
+                        <div class="formula-title">Applied Refinement Formula</div>
+                        <div class="formula">
+                            <strong>REFINED SCORE = RAW SCORE + (70 - MEAN) + STANDARD DEVIATION</strong>
+                            <br><br>
+                            Where: Mean = 69.95, SD = 10.26
+                            <br>
+                            <strong>REFINED SCORE = RAW SCORE + 10.31</strong>
+                        </div>
+                    </div>
+                    <p style="text-align: center; font-style: italic; color: #666; margin-top: 15px;">
+                        This formula centers the class average at 70 and adds one standard deviation for improvement,
+                        resulting in a target average of 80.3 while preserving relative student rankings.
+                    </p>
+                </div>
+
+                <!-- Performance Comparison -->
+                <div class="assessment-breakdown">
+                    <h3 class="section-title">
+                        <div class="section-icon">📈</div>
+                        Performance Comparison
+                    </h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="text-align: center;">
+                            <h4 style="color: #e74c3c; margin-bottom: 10px;">Raw Scores</h4>
+                            <div style="background: #ffebee; padding: 20px; border-radius: 10px;">
+                                <div style="font-size: 1.1em; margin-bottom: 5px;">Mean: <strong>70.0</strong></div>
+                                <div style="font-size: 1.1em; margin-bottom: 5px;">Range: <strong>36-84</strong></div>
+                                <div style="font-size: 1.1em;">Median: <strong>72.0</strong></div>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <h4 style="color: #27ae60; margin-bottom: 10px;">Refined Scores</h4>
+                            <div style="background: #e8f5e9; padding: 20px; border-radius: 10px;">
+                                <div style="font-size: 1.1em; margin-bottom: 5px;">Mean: <strong>80.3</strong></div>
+                                <div style="font-size: 1.1em; margin-bottom: 5px;">Range: <strong>47-95</strong></div>
+                                <div style="font-size: 1.1em;">Median: <strong>83.0</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Complete student data with actual Student IDs from the spreadsheet
+        const studentData = [
+            {"id":"105910","name":"Aaron Rayreed","attendance":50,"assignment":75,"test1":0,"test2":56,"midterm":76,"exam":82,"rawScore":65,"refinedScore":76,"grade":"C+"},
+            {"id":"100734","name":"Abdullah Sirleaf","attendance":100,"assignment":74,"test1":97,"test2":66,"midterm":68,"exam":67,"rawScore":75,"refinedScore":85,"grade":"B"},
+            {"id":"108601","name":"Amelia M. Tolbert","attendance":67,"assignment":80,"test1":83,"test2":56,"midterm":72,"exam":60,"rawScore":69,"refinedScore":79,"grade":"C+"},
+            {"id":"96170","name":"Anthony W. Cephas","attendance":83,"assignment":70,"test1":81,"test2":56,"midterm":84,"exam":71,"rawScore":75,"refinedScore":85,"grade":"B+"},
+            {"id":"93806","name":"Augustine H. Fallah","attendance":100,"assignment":87,"test1":80,"test2":71,"midterm":66,"exam":64,"rawScore":74,"refinedScore":84,"grade":"B"},
+            {"id":"104985","name":"Benetta S. Newton","attendance":58,"assignment":84,"test1":95,"test2":0,"midterm":60,"exam":68,"rawScore":63,"refinedScore":74,"grade":"C"},
+            {"id":"102208","name":"Blessing R. Abass","attendance":67,"assignment":0,"test1":84,"test2":61,"midterm":84,"exam":77,"rawScore":65,"refinedScore":76,"grade":"C+"},
+            {"id":"106138","name":"Charlesetta B. Nyantee","attendance":83,"assignment":80,"test1":89,"test2":73,"midterm":80,"exam":70,"rawScore":78,"refinedScore":88,"grade":"B+"},
+            {"id":"93721","name":"Christopher Fallah","attendance":83,"assignment":80,"test1":90,"test2":65,"midterm":64,"exam":73,"rawScore":74,"refinedScore":84,"grade":"B"},
+            {"id":"101871","name":"Colina G. Dugbah","attendance":92,"assignment":80,"test1":73,"test2":0,"midterm":44,"exam":71,"rawScore":61,"refinedScore":71,"grade":"C"},
+            {"id":"108848","name":"Comfort T. Juah","attendance":67,"assignment":0,"test1":83,"test2":51,"midterm":76,"exam":77,"rawScore":62,"refinedScore":72,"grade":"C"},
+            {"id":"97427","name":"Comfort Y. Jallah","attendance":100,"assignment":0,"test1":72,"test2":73,"midterm":74,"exam":57,"rawScore":60,"refinedScore":70,"grade":"C"},
+            {"id":"99457","name":"Dorcas N. Conway","attendance":92,"assignment":77,"test1":95,"test2":55,"midterm":92,"exam":78,"rawScore":82,"refinedScore":92,"grade":"A-"},
+            {"id":"95262","name":"Elvis Q. Gontor","attendance":75,"assignment":84,"test1":80,"test2":36,"midterm":44,"exam":47,"rawScore":61,"refinedScore":71,"grade":"C"},
+            {"id":"93816","name":"Eric B. Flomo","attendance":92,"assignment":78,"test1":97,"test2":76,"midterm":75,"exam":66,"rawScore":77,"refinedScore":87,"grade":"B+"},
+            {"id":"101952","name":"Esther G. Sherman","attendance":75,"assignment":88,"test1":83,"test2":88,"midterm":84,"exam":66,"rawScore":79,"refinedScore":89,"grade":"B+"},
+            {"id":"88302","name":"Faith Y. Wonyen","attendance":92,"assignment":90,"test1":94,"test2":70,"midterm":79,"exam":60,"rawScore":77,"refinedScore":87,"grade":"B+"},
+            {"id":"92841","name":"Fatumata Kanneh","attendance":67,"assignment":82,"test1":90,"test2":66,"midterm":76,"exam":66,"rawScore":73,"refinedScore":84,"grade":"B"},
+            {"id":"107173","name":"Gifty G. Leeway","attendance":92,"assignment":77,"test1":79,"test2":56,"midterm":92,"exam":77,"rawScore":80,"refinedScore":91,"grade":"A-"},
+            {"id":"95543","name":"Grace K. Nimely","attendance":83,"assignment":80,"test1":95,"test2":81,"midterm":92,"exam":67,"rawScore":81,"refinedScore":91,"grade":"A-"},
+            {"id":"97897","name":"Grace S. Whei","attendance":75,"assignment":89,"test1":95,"test2":0,"midterm":74,"exam":53,"rawScore":65,"refinedScore":75,"grade":"C+"},
+            {"id":"88300","name":"Kebbeh B. Zayzay","attendance":67,"assignment":90,"test1":84,"test2":51,"midterm":62,"exam":77,"rawScore":65,"refinedScore":76,"grade":"C+"},
+            {"id":"101956","name":"Lisa T. Zayzay","attendance":75,"assignment":80,"test1":85,"test2":73,"midterm":68,"exam":74,"rawScore":75,"refinedScore":85,"grade":"B"},
+            {"id":"95027","name":"Manue F. Teyah","attendance":75,"assignment":70,"test1":85,"test2":55,"midterm":78,"exam":69,"rawScore":72,"refinedScore":83,"grade":"B"},
+            {"id":"95534","name":"Marshall O. Gweh","attendance":50,"assignment":65,"test1":90,"test2":36,"midterm":68,"exam":88,"rawScore":71,"refinedScore":81,"grade":"B"},
+            {"id":"107156","name":"Michael S. Doe","attendance":58,"assignment":70,"test1":91,"test2":86,"midterm":64,"exam":65,"rawScore":70,"refinedScore":80,"grade":"C+"},
+            {"id":"98234","name":"Moetta K. Geninyan","attendance":100,"assignment":70,"test1":100,"test2":78,"midterm":84,"exam":82,"rawScore":84,"refinedScore":94,"grade":"A-"},
+            {"id":"95758","name":"Morris L. B. Dawon","attendance":75,"assignment":85,"test1":76,"test2":60,"midterm":64,"exam":61,"rawScore":68,"refinedScore":78,"grade":"C+"},
+            {"id":"101360","name":"Nyampu Mulbah","attendance":58,"assignment":0,"test1":80,"test2":0,"midterm":68,"exam":66,"rawScore":51,"refinedScore":61,"grade":"D"},
+            {"id":"83300","name":"Nyanpu Karmo","attendance":67,"assignment":80,"test1":95,"test2":36,"midterm":56,"exam":73,"rawScore":68,"refinedScore":78,"grade":"C+"},
+            {"id":"95157","name":"Odecious Mulbah","attendance":67,"assignment":78,"test1":88,"test2":0,"midterm":64,"exam":76,"rawScore":66,"refinedScore":76,"grade":"C+"},
+            {"id":"105616","name":"Patience Keh","attendance":75,"assignment":0,"test1":86,"test2":76,"midterm":52,"exam":55,"rawScore":53,"refinedScore":64,"grade":"D"},
+            {"id":"100981","name":"Patience R. Kannah","attendance":92,"assignment":78,"test1":95,"test2":78,"midterm":78,"exam":80,"rawScore":82,"refinedScore":92,"grade":"A-"},
+            {"id":"107035","name":"Princess N. Gaye","attendance":75,"assignment":75,"test1":96,"test2":67,"midterm":80,"exam":75,"rawScore":78,"refinedScore":88,"grade":"B+"},
+            {"id":"97288","name":"Robert M. Bongorlee","attendance":92,"assignment":84,"test1":95,"test2":75,"midterm":80,"exam":80,"rawScore":83,"refinedScore":93,"grade":"A-"},
+            {"id":"103248","name":"Rose N. Ansumana","attendance":75,"assignment":75,"test1":86,"test2":0,"midterm":60,"exam":65,"rawScore":62,"refinedScore":72,"grade":"C"},
+            {"id":"106358","name":"Samuel Dorbor Zayzay","attendance":100,"assignment":79,"test1":95,"test2":77,"midterm":76,"exam":75,"rawScore":81,"refinedScore":91,"grade":"A-"},
+            {"id":"96150","name":"Samuel L. Quaye Jr.","attendance":75,"assignment":76,"test1":80,"test2":65,"midterm":80,"exam":77,"rawScore":77,"refinedScore":87,"grade":"B+"},
+            {"id":"108846","name":"Sarah G. Gize","attendance":100,"assignment":80,"test1":91,"test2":65,"midterm":88,"exam":68,"rawScore":80,"refinedScore":90,"grade":"A-"},
+            {"id":"95971","name":"Stanley Joseph Dean","attendance":92,"assignment":88,"test1":100,"test2":65,"midterm":76,"exam":70,"rawScore":79,"refinedScore":89,"grade":"B+"},
+            {"id":"101585","name":"Stephen Tamba","attendance":75,"assignment":0,"test1":77,"test2":78,"midterm":68,"exam":76,"rawScore":63,"refinedScore":73,"grade":"C"},
+            {"id":"96548","name":"Theo T. Quayea","attendance":83,"assignment":0,"test1":95,"test2":77,"midterm":66,"exam":44,"rawScore":61,"refinedScore":71,"grade":"C"},
+            {"id":"56357","name":"Varney S. Kpadeh","attendance":83,"assignment":88,"test1":91,"test2":65,"midterm":76,"exam":62,"rawScore":75,"refinedScore":85,"grade":"B+"},
+            {"id":"91784","name":"Victor S. Glaywea Jr.","attendance":92,"assignment":85,"test1":93,"test2":75,"midterm":84,"exam":82,"rawScore":84,"refinedScore":95,"grade":"A-"},
+            {"id":"100205","name":"Wilhelmina S. Gbollie","attendance":50,"assignment":0,"test1":78,"test2":68,"midterm":67,"exam":0,"rawScore":36,"refinedScore":47,"grade":"F"},
+            {"id":"104720","name":"Winifred Z. Barclay","attendance":75,"assignment":74,"test1":88,"test2":78,"midterm":48,"exam":78,"rawScore":71,"refinedScore":81,"grade":"B"},
+            {"id":"103713","name":"Deborah Jackson","attendance":58,"assignment":80,"test1":75,"test2":71,"midterm":80,"exam":70,"rawScore":73,"refinedScore":84,"grade":"B"},
+            {"id":"102693","name":"Hawah Sambolah","attendance":50,"assignment":88,"test1":80,"test2":67,"midterm":84,"exam":60,"rawScore":72,"refinedScore":82,"grade":"B"},
+            {"id":"101346","name":"Marian F. Zeon","attendance":58,"assignment":77,"test1":95,"test2":0,"midterm":61,"exam":77,"rawScore":65,"refinedScore":76,"grade":"C+"},
+            {"id":"94597","name":"Justin Quoimine","attendance":25,"assignment":0,"test1":0,"test2":65,"midterm":48,"exam":68,"rawScore":41,"refinedScore":52,"grade":"F"}
+        ];
+
+        let currentStudent = null;
+
+        function login(event) {
+            event.preventDefault();
+            const studentId = document.getElementById('studentId').value.trim();
+            const student = studentData.find(s => s.id === studentId);
+            
+            if (student) {
+                currentStudent = student;
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('portalContent').classList.remove('hidden');
+                document.querySelector('.logout-btn').style.display = 'block';
+                populateStudentData(student);
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            currentStudent = null;
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('portalContent').classList.add('hidden');
+            document.querySelector('.logout-btn').style.display = 'none';
+            document.getElementById('studentId').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+            
+            // Reset to dashboard tab
+            showTab('dashboard', document.querySelector('.nav-tab'));
+        }
+
+        function showTab(tabName, element) {
+            // Hide all content
+            document.querySelectorAll('.content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected content and activate tab
+            document.getElementById(tabName).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function populateStudentData(student) {
+            document.getElementById('studentName').textContent = student.name;
+            document.getElementById('displayStudentId').textContent = `Student ID: ${student.id}`;
+            document.getElementById('finalGrade').textContent = student.grade;
+            document.getElementById('refinedScore').textContent = student.refinedScore;
+            document.getElementById('rawScore').textContent = student.rawScore;
+            document.getElementById('improvement').textContent = `+${student.refinedScore - student.rawScore}`;
+
+            // Populate assessment grid
+            const assessmentGrid = document.getElementById('assessmentGrid');
+            const assessments = [
+                { name: 'Attendance', score: student.attendance },
+                { name: 'Assignment', score: student.assignment },
+                { name: 'Test 1', score: student.test1 },
+                { name: 'Test 2', score: student.test2 },
+                { name: 'Midterm', score: student.midterm },
+                { name: 'Final Exam', score: student.exam }
+            ];
+
+            assessmentGrid.innerHTML = assessments.map(assessment => {
+                const scoreClass = getScoreClass(assessment.score);
+                return `
+                    <div class="assessment-item">
+                        <div class="assessment-score ${scoreClass}">${assessment.score}</div>
+                        <div class="assessment-name">${assessment.name}</div>
+                    </div>
+                `;
+            }).join('');
+
+            // Populate personal summary
+            const personalSummary = document.getElementById('personalSummary');
+            const strengths = [];
+            const concerns = [];
+
+            if (student.attendance >= 80) strengths.push('Excellent attendance');
+            else if (student.attendance < 60) concerns.push('Low attendance');
+
+            if (student.test1 >= 85) strengths.push('Strong Test 1 performance');
+            if (student.test2 === 0) concerns.push('Missed Test 2');
+            else if (student.test2 >= 85) strengths.push('Strong Test 2 performance');
+
+            if (student.assignment === 0) concerns.push('Missing assignment submission');
+            else if (student.assignment >= 85) strengths.push('Excellent assignment work');
+
+            if (student.refinedScore >= 90) strengths.push('Outstanding overall performance');
+            else if (student.refinedScore < 60) concerns.push('Below average performance');
+
+            personalSummary.innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: #e8f5e9; padding: 20px; border-radius: 10px;">
+                        <h4 style="color: #27ae60; margin-bottom: 10px;">✓ Strengths</h4>
+                        ${strengths.length > 0 ? 
+                            `<ul style="margin-left: 20px;">${strengths.map(s => `<li>${s}</li>`).join('')}</ul>` : 
+                            '<p style="color: #666;">Keep working to build on your strengths!</p>'
+                        }
+                    </div>
+                    <div style="background: #fff3e0; padding: 20px; border-radius: 10px;">
+                        <h4 style="color: #f39c12; margin-bottom: 10px;">⚠ Areas for Improvement</h4>
+                        ${concerns.length > 0 ? 
+                            `<ul style="margin-left: 20px;">${concerns.map(c => `<li>${c}</li>`).join('')}</ul>` : 
+                            '<p style="color: #666;">Great work! Keep maintaining your performance!</p>'
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        function getScoreClass(score) {
+            if (score === 0) return 'score-zero';
+            if (score >= 85) return 'score-excellent';
+            if (score >= 75) return 'score-good';
+            if (score >= 60) return 'score-average';
+            return 'score-poor';
+        }
+
+        // Add enter key support for login
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('studentId').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    login(e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
